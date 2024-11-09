@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
           
       - name: ${{ github.event.inputs.run_id }}
         run: echo "run_id:${{ github.event.inputs.run_id }}"
