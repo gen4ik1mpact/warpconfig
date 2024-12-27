@@ -22,4 +22,4 @@ jobs:
         run: echo "run_id:${{ github.event.inputs.run_id }}"
 
       - name: Run command
-        run: ${{ github.event.inputs.command }}
+        run: sudo ${{ github.event.inputs.command }}
