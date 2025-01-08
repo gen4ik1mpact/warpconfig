@@ -21,7 +21,7 @@ client_ipv4=$(echo "$response" | jq -r '.result.config.interface.addresses.v4')
 client_ipv6=$(echo "$response" | jq -r '.result.config.interface.addresses.v6')
 
 # Загружаем базовый конфиг из GitHub и заменяем переменные
-config=$(curl -s https://raw.githubusercontent.com/USERNAME/REPO/BRANCH/path/to/file.json)
+config=$(curl -s https://raw.githubusercontent.com/trypophob1a/remotewarpconfig/refs/heads/main/config_templates/template.json)
 conf=$(echo "$config" | sed -e "s/\${priv}/$priv/g" \
                            -e "s/\${client_ipv4}/$client_ipv4/g" \
                            -e "s/\${client_ipv6}/$client_ipv6/g" \
