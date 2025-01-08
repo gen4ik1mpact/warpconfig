@@ -20,12 +20,25 @@ peer_pub=$(echo "$response" | jq -r '.result.config.peers[0].public_key')
 client_ipv4=$(echo "$response" | jq -r '.result.config.interface.addresses.v4')
 client_ipv6=$(echo "$response" | jq -r '.result.config.interface.addresses.v6')
 
-# Загружаем базовый конфиг из GitHub и заменяем переменные
-config=$(curl -s https://raw.githubusercontent.com/trypophob1a/remotewarpconfig/refs/heads/main/config_templates/template.json)
-conf=$(echo "$config" | sed -e "s/\${priv}/$priv/g" \
-                           -e "s/\${client_ipv4}/$client_ipv4/g" \
-                           -e "s/\${client_ipv6}/$client_ipv6/g" \
-                           -e "s/\${peer_pub}/$peer_pub/g")
+# Загружаем конфиг по прямой ссылке
+config_url="https://raw.githubusercontent.com/trypophob1a/remotewarpconfig/main/config_templates/template.json"
+if ! config=$(curl -s "$config_url"); then
+    echo "Ошибка загрузки конфига"
+    exit 1
+fi
+
+# Экранируем специальные символы в переменных
+priv_esc=$(printf '%s\n' "$priv" | sed 's:[\/&]:\\&:g;$!s/$/\\/')
+client_ipv4_esc=$(printf '%s\n' "$client_ipv4" | sed 's:[\/&]:\\&:g;$!s/$/\\/')
+client_ipv6_esc=$(printf '%s\n' "$client_ipv6" | sed 's:[\/&]:\\&:g;$!s/$/\\/')
+peer_pub_esc=$(printf '%s\n' "$peer_pub" | sed 's:[\/&]:\\&:g;$!s/$/\\/')
+
+# Заменяем переменные в конфиге используя | как разделитель
+conf=$(echo "$config" | sed \
+    -e "s|\${priv}|$priv_esc|g" \
+    -e "s|\${client_ipv4}|$client_ipv4_esc|g" \
+    -e "s|\${client_ipv6}|$client_ipv6_esc|g" \
+    -e "s|\${peer_pub}|$peer_pub_esc|g")
 
 echo -e "\n\n\n"
 [ -t 1 ] && echo "########## НАЧАЛО КОНФИГА ##########"
