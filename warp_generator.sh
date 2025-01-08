@@ -25,25 +25,28 @@ client_ipv4=$(echo "$response" | jq -r '.result.config.interface.addresses.v4')
 client_ipv6=$(echo "$response" | jq -r '.result.config.interface.addresses.v6')
 
 conf=$(cat <<-EOM
-[Interface]
-PrivateKey = ${priv}
-S1 = 0
-S2 = 0
-Jc = 120
-Jmin = 23
-Jmax = 911
-H1 = 1
-H2 = 2
-H3 = 3
-H4 = 4
-MTU = 1500
-Address = ${client_ipv4}, ${client_ipv6}
-DNS = 1.1.1.1, 2606:4700:4700::1111, 1.0.0.1, 2606:4700:4700::1001
-
-[Peer]
-PublicKey = ${peer_pub}
-AllowedIPs = 0.0.0.0/0, ::/0
-Endpoint = 188.114.97.66:3138
+{
+  "interface": {
+   "private_key": "${priv}",
+   "s1": 0,
+   "s2": 0,
+   "j_c": 120,
+   "j_min": 23,
+   "j_max": 911,
+   "h1": 1,
+   "h2": 2,
+   "h3": 3,
+   "h4": 4,
+   "mtu": 1500,
+   "address": "${client_ipv4}, ${client_ipv6}",
+   "dns": ["1.1.1.1"," 2606:4700:4700::1111", "1.0.0.1", "2606:4700:4700::1001"]
+  },
+  "peer": {
+   "publicKey": "${peer_pub}",
+   "allowed_ips": ["0.0.0.0/0", "::/0"],
+   "endpoint": "188.114.97.66:3138"
+  }
+}
 EOM
 )
 
